@@ -1,0 +1,217 @@
+import { CheckIn } from "@/checkIns/CheckIn";
+import { CountGoal } from "@/goals/CountGoal";
+import { FrequencyGoal } from "@/goals/FrequencyGoal";
+import { Goal } from "@/goals/Goal";
+import { ProgressGoal } from "@/goals/ProgressGoal";
+import { StreakGoal } from "@/goals/StreakGoal";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  QueryDocumentSnapshot,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../../firebase";
+
+export function loadGoals(
+  onGoalsChanged: (goals: Goal[]) => void,
+  onError: (error: Error) => void
+) {
+  const goalCollection = collection(db, "goals");
+  const q = query(goalCollection, orderBy("name"));
+  console.log("Load goals");
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      console.log("Snapshot received:", snapshot.docs.length);
+      const goals = snapshot.docs.map(mapGoalFromDatabase) as Goal[];
+      onGoalsChanged(goals);
+    },
+    (error) => {
+      console.error("load goals error:", error);
+      onError(error);
+    }
+  );
+  return unsubscribe;
+}
+
+function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
+  console.log("Doc " + doc);
+  const data = doc.data();
+  switch (data.type) {
+    case "count":
+      return new CountGoal({
+        id: doc.id,
+        name: data.name,
+        type: "count",
+        startDate: data.startDate.toDate(),
+        valueUnit: data.valueUnit,
+      });
+    case "frequency":
+      return new FrequencyGoal({
+        id: doc.id,
+        name: data.name,
+        type: "frequency",
+        startDate: data.startDate.toDate(),
+        value: data.value,
+        valueUnit: data.valueUnit,
+        dateBy: data.dateBy ? data.dateBy.toDate() : undefined,
+        frequency: data.frequency,
+        frequencyUnit: data.frequencyUnit,
+      });
+    case "progress":
+      return new ProgressGoal({
+        id: doc.id,
+        name: data.name,
+        type: "progress",
+        startDate: data.startDate.toDate(),
+        value: data.value,
+        valueUnit: data.valueUnit,
+        dateBy: data.dateBy ? data.dateBy.toDate() : undefined,
+      });
+    case "streak":
+      return new StreakGoal({
+        id: doc.id,
+        name: data.name,
+        type: "streak",
+        startDate: data.startDate.toDate(),
+        value: data.value,
+        valueUnit: data.valueUnit,
+        dateBy: data.dateBy ? data.dateBy.toDate() : undefined,
+      });
+    default:
+      throw new Error(`Goal Type is not supported`);
+  }
+}
+
+export function loadCheckIns(
+  onCheckInsChanged: (goals: CheckIn[]) => void,
+  onError: (error: Error) => void
+) {
+  const checkInCollection = collection(db, "checkIns");
+  const q = query(checkInCollection, orderBy("checkInDate"));
+  console.log("Load CheckIns");
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      console.log("Snapshot received:", snapshot.docs.length);
+      const goals = snapshot.docs.map((checkIn) => {
+        const data = checkIn.data();
+        return {
+          id: checkIn.id,
+          goalId: data.goalId,
+          checkInDate: data.checkInDate ? data.checkInDate.toDate() : undefined,
+          value: data.value,
+        };
+      }) as CheckIn[];
+      onCheckInsChanged(goals);
+    },
+    (error) => {
+      console.error("load checkIns error:", error);
+      onError(error);
+    }
+  );
+  return unsubscribe;
+}
+
+export async function addGoal(goal: Goal): Promise<void> {
+  const goalCollection = collection(db, "goals");
+  const { id, ...goalData } = goal; //"object destructuring with the rest operator"
+
+  //Don't need the id, so take it off and leave the data
+  try {
+    if (
+      goal instanceof FrequencyGoal ||
+      goal instanceof ProgressGoal ||
+      goal instanceof StreakGoal
+    ) {
+      await addDoc(goalCollection, {
+        ...goalData,
+        dateBy: goal.dateBy ?? null,
+      });
+    } else {
+      await addDoc(goalCollection, {
+        ...goalData,
+      });
+    }
+
+    console.log("Adding goal");
+  } catch (error) {
+    console.error("Error adding goal.", error);
+  }
+}
+
+export async function addCheckIn(checkIn: CheckIn): Promise<void> {
+  const checkInCollection = collection(db, "checkIns");
+  const { id, ...checkInData } = checkIn; //"object destructuring with the rest operator"
+
+  //Don't need the id, so take it off and leave the data
+  try {
+    await addDoc(checkInCollection, {
+      ...checkInData,
+    });
+
+    console.log("Adding checkIn");
+  } catch (error) {
+    console.error("Error adding checkIn.", error);
+  }
+}
+
+export async function deleteCheckIn(checkInId: string): Promise<void> {
+  try {
+    const checkIn = doc(db, "checkIns", checkInId);
+    await deleteDoc(checkIn);
+  } catch (error) {
+    console.error("Error deleting check-in.", error);
+  }
+}
+
+export async function deleteGoal(goalId: string): Promise<void> {
+  try {
+    const goal = doc(db, "goals", goalId);
+    await deleteDoc(goal);
+    //Delete checkIns
+    await deleteCheckInsByGoalId(goalId);
+  } catch (error) {
+    console.error("Error deleting goal.", error);
+  }
+}
+
+export async function deleteCheckInsByGoalId(goalId: string): Promise<void> {
+  const checkInCollection = collection(db, "checkIns");
+
+  const q = query(checkInCollection, where("goalId", "==", goalId));
+
+  const snapshot = await getDocs(q);
+  snapshot.docs.forEach(async (doc) => {
+    await deleteDoc(doc.ref); //this is the reference to the actual document
+  });
+}
+
+export async function updateGoal(goal: Goal): Promise<void> {
+  //To update, we need a specific document
+  const { id, ...goalData } = goal; //"object destructuring with the rest operator"
+
+  const goalDoc = doc(db, "goals", id);
+  //Don't need the id, so take it off and leave the data
+  try {
+    if (
+      goal instanceof FrequencyGoal ||
+      goal instanceof ProgressGoal ||
+      goal instanceof StreakGoal
+    ) {
+      await updateDoc(goalDoc, { ...goalData, dateBy: goal.dateBy ?? null });
+    } else {
+      await updateDoc(goalDoc, goalData);
+    }
+    console.log("Updating goal");
+  } catch (error) {
+    console.error("Error updating goal.", error);
+  }
+}
