@@ -1,5 +1,5 @@
 import { useGoals } from "@/context/GoalProvider";
-import { createGoalId } from "@/goals/dataUtil";
+import { updateGoal } from "@/firestore/firestoreUtil";
 import { StreakGoal } from "@/goals/StreakGoal";
 import { StreakGoalData } from "@/goals/StreakGoalData";
 import { ValueUnit } from "@/goals/ValueUnit";
@@ -12,35 +12,56 @@ import SubmitAddGoal from "../fields/SubmitAddGoal";
 import Value from "../fields/Value";
 import ValueUnitPicker from "../fields/ValueUnitPicker";
 
+type StreakGoalProps = {
+  goal: StreakGoal | undefined;
+};
+
 //This is the form for entering a streak goal
-export default function AddStreakGoal() {
+export default function AddStreakGoal({ goal }: StreakGoalProps) {
   const { addGoal } = useGoals();
-  const [startDate, setStartDate] = useState<Date>(new Date(2026, 0, 1));
-  const [name, setName] = useState<string>("");
-  const [valueUnit, setValueUnit] = useState<ValueUnit>("min");
-  const [value, setValue] = useState<string>("");
+  const [startDate, setStartDate] = useState<Date>(
+    goal?.startDate ?? new Date(2026, 0, 1)
+  );
+  const [name, setName] = useState<string>(goal?.name ?? "");
+  const [valueUnit, setValueUnit] = useState<ValueUnit>(
+    goal?.valueUnit ?? "min"
+  );
+  const [value, setValue] = useState<string>(goal?.value?.toString() ?? "");
 
   async function handleSubmit(): Promise<void> {
-    const goalData: StreakGoalData = {
-      id: createGoalId(),
-      name: name,
-      type: "streak",
-      valueUnit: valueUnit,
-      startDate: startDate,
-      value: Number(value),
-      dateBy: undefined,
-    };
-    const goal = new StreakGoal(goalData);
-    try {
-      addGoal(goal);
-      console.log(
-        "goal" + name + " startDate " + startDate + " valueUnit " + valueUnit
-      );
-      //reset values
-      setName("");
-      router.back();
-    } catch (error) {
-      console.log("Error adding goal", error);
+    if (goal?.id) {
+      goal.name = name;
+      goal.valueUnit = valueUnit;
+      goal.startDate = startDate;
+      goal.value = Number(value);
+
+      try {
+        await updateGoal(goal);
+        router.back();
+      } catch (error) {
+        console.log("Error updating goals");
+      }
+    } else {
+      const goalData: StreakGoalData = {
+        name: name,
+        type: "streak",
+        valueUnit: valueUnit,
+        startDate: startDate,
+        value: Number(value),
+        dateBy: undefined,
+      };
+      const newGoal = new StreakGoal(goalData);
+      try {
+        addGoal(newGoal);
+        console.log(
+          "goal" + name + " startDate " + startDate + " valueUnit " + valueUnit
+        );
+        //reset values
+        //setName("");
+        router.back();
+      } catch (error) {
+        console.log("Error adding goal", error);
+      }
     }
   }
 
@@ -53,7 +74,10 @@ export default function AddStreakGoal() {
         setValueUnit={setValueUnit}
       ></ValueUnitPicker>
       <StartDate startDate={startDate} setStartDate={setStartDate}></StartDate>
-      <SubmitAddGoal handleSubmit={handleSubmit}></SubmitAddGoal>
+      <SubmitAddGoal
+        handleSubmit={handleSubmit}
+        addEdit={goal?.id ? "edit" : "add"}
+      ></SubmitAddGoal>
     </View>
   );
 }

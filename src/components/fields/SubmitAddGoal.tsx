@@ -1,10 +1,15 @@
+import { AddEditType } from "@/goals/AddEditType";
 import { Pressable, Text } from "react-native";
 
 type SubmitAddGoalProps = {
   handleSubmit: () => void;
+  addEdit: AddEditType;
 };
 //The is the submit button used by all goals
-export default function SubmitAddGoal({ handleSubmit }: SubmitAddGoalProps) {
+export default function SubmitAddGoal({
+  handleSubmit,
+  addEdit,
+}: SubmitAddGoalProps) {
   return (
     <Pressable
       onPress={handleSubmit}
@@ -23,7 +28,7 @@ export default function SubmitAddGoal({ handleSubmit }: SubmitAddGoalProps) {
           fontWeight: "600",
         }}
       >
-        Add Goal
+        {addEdit == "add" ? "Add Goal" : "Edit Goal"}
       </Text>
     </Pressable>
   );

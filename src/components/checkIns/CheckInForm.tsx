@@ -1,9 +1,7 @@
 import { CheckIn } from "@/checkIns/CheckIn";
 import { useGoals } from "@/context/GoalProvider";
 import { createCheckInId } from "@/goals/dataUtil";
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
@@ -21,9 +19,8 @@ export function CheckInForm({ goalId, valueUnit, goalName }: CheckInFormProps) {
   const [value, setValue] = useState(0);
 
   function handleDateChange(
-    event: DateTimePickerEvent,
-    date?: Date | undefined
-  ): void {
+    _event: DateTimePickerChangeEvent, 
+    date?: Date): void {
     if (date) setCheckInDate(date);
   }
 
@@ -88,7 +85,7 @@ export function CheckInForm({ goalId, valueUnit, goalName }: CheckInFormProps) {
       <DateTimePicker
         value={checkInDate}
         mode="date"
-        onChange={handleDateChange}
+        onValueChange={handleDateChange}
       />
       {/* <input
         type="date"

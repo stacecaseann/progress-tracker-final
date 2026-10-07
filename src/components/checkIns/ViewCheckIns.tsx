@@ -61,7 +61,7 @@ export default function ViewCheckIns() {
                 gap: 8,
               }}
             >
-              <Text>{checkIn.checkInDate.toLocaleString()}</Text>
+              <Text>{checkIn.checkInDate.toLocaleDateString()}</Text>
               <Text>
                 {checkIn.value} {currentGoal?.valueUnit}
               </Text>

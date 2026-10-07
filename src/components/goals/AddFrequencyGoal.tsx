@@ -1,5 +1,4 @@
 import { useGoals } from "@/context/GoalProvider";
-import { createGoalId } from "@/goals/dataUtil";
 import { FrequencyGoal } from "@/goals/FrequencyGoal";
 import { FrequencyGoalData } from "@/goals/FrequencyGoalData";
 import { FrequencyUnit } from "@/goals/FrequencyUnit";
@@ -15,38 +14,62 @@ import SubmitAddGoal from "../fields/SubmitAddGoal";
 import Value from "../fields/Value";
 import ValueUnitPicker from "../fields/ValueUnitPicker";
 
-//This is the form for entering a frequency goal
-export default function AddFrequencyGoal() {
-  const { addGoal } = useGoals();
-  const [startDate, setStartDate] = useState<Date>(new Date(2026, 0, 1));
-  const [name, setName] = useState<string>("");
-  const [valueUnit, setValueUnit] = useState<ValueUnit>("min");
-  const [value, setValue] = useState<string>("");
-  const [frequency, setFrequency] = useState<string>("");
-  const [frequencyUnit, setFrequencyUnit] = useState<FrequencyUnit>("week");
+type FrequencyGoalProps = {
+  goal: FrequencyGoal | undefined;
+};
+//This is the form for entering or editing a frequency goal
+export default function AddFrequencyGoal({ goal }: FrequencyGoalProps) {
+  const { addGoal, updateGoal } = useGoals();
+  const [startDate, setStartDate] = useState<Date>(
+    goal?.startDate ?? new Date(2026, 0, 1)
+  );
+  const [name, setName] = useState<string>(goal?.name ?? "");
+  const [valueUnit, setValueUnit] = useState<ValueUnit>(
+    goal?.valueUnit ?? "min"
+  );
+  const [value, setValue] = useState<string>(goal?.value?.toString() ?? "");
+  const [frequency, setFrequency] = useState<string>(
+    goal?.frequency?.toString() ?? ""
+  );
+  const [frequencyUnit, setFrequencyUnit] = useState<FrequencyUnit>(
+    goal?.frequencyUnit ?? "week"
+  );
   async function handleSubmit(): Promise<void> {
-    const goalData: FrequencyGoalData = {
-      id: createGoalId(),
-      name: name,
-      type: "frequency",
-      valueUnit: valueUnit,
-      startDate: startDate,
-      value: Number(value),
-      frequency: Number(frequency),
-      frequencyUnit: frequencyUnit,
-      dateBy: undefined,
-    };
-    const goal = new FrequencyGoal(goalData);
-    try {
-      await addGoal(goal);
-      console.log(
-        "goal" + name + " startDate " + startDate + " valueUnit " + valueUnit
-      );
-      //reset values
-      setName("");
-      router.back();
-    } catch (error) {
-      console.log("Error adding goal ", error);
+    if (goal?.id) {
+      goal.name = name;
+      goal.startDate = startDate;
+      goal.value = Number(value);
+      goal.frequency = Number(frequency);
+      goal.frequencyUnit = frequencyUnit;
+      try {
+        await updateGoal(goal);
+        router.back();
+      } catch (error) {
+        console.log("Error updating goal");
+      }
+    } else {
+      const goalData: FrequencyGoalData = {
+        name: name,
+        type: "frequency",
+        valueUnit: valueUnit,
+        startDate: startDate,
+        value: Number(value),
+        frequency: Number(frequency),
+        frequencyUnit: frequencyUnit,
+        dateBy: undefined,
+      };
+      const newGoal = new FrequencyGoal(goalData);
+      try {
+        await addGoal(newGoal);
+        console.log(
+          "goal" + name + " startDate " + startDate + " valueUnit " + valueUnit
+        );
+        //reset values
+        //setName("");
+        router.back();
+      } catch (error) {
+        console.log("Error adding goal ", error);
+      }
     }
   }
 
@@ -64,7 +87,10 @@ export default function AddFrequencyGoal() {
         setFrequencyUnit={setFrequencyUnit}
       ></FrequencyUnitPicker>
       <StartDate startDate={startDate} setStartDate={setStartDate}></StartDate>
-      <SubmitAddGoal handleSubmit={handleSubmit}></SubmitAddGoal>
+      <SubmitAddGoal
+        handleSubmit={handleSubmit}
+        addEdit={goal?.id ? "edit" : "add"}
+      ></SubmitAddGoal>
     </View>
   );
 }

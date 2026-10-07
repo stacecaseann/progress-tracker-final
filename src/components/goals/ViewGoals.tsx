@@ -11,13 +11,12 @@ export default function ViewGoals() {
     });
   }
 
-  //Add this functionality later
-  // function handleEdit(goalId: string) {
-  //   router.push({
-  //     pathname: "/goals/edit",
-  //     params: { goalId: goalId },
-  //   });
-  // }
+  function handleEdit(goalId: string) {
+    router.push({
+      pathname: "/goals/edit",
+      params: { goalId: goalId },//pass all the values or just some?
+    });
+  }
 
   async function handleDelete(goalId: string) {
     Alert.alert("Delete Goal", "Are you sure you want to delete this goal?", [
@@ -63,7 +62,7 @@ export default function ViewGoals() {
                 gap: 8,
               }}
             >
-              {/* <Pressable
+              <Pressable
                 onPress={() => handleEdit(goal.id)}
                 style={{
                   backgroundColor: "#397F76",
@@ -82,7 +81,7 @@ export default function ViewGoals() {
                 >
                   Edit
                 </Text>
-              </Pressable> */}
+              </Pressable>
               <Pressable
                 onPress={() => handleDelete(goal.id)}
                 style={{
