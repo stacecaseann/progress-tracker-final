@@ -31,10 +31,16 @@ export default function AddGoals() {
         zIndexInverse={1000}
       ></DropDownPicker>
       <View style={{ zIndex: 1 }}>
-        {goalType === "count" && <AddCountGoal></AddCountGoal>}
-        {goalType === "frequency" && <AddFrequencyGoal></AddFrequencyGoal>}
-        {goalType === "progress" && <AddProgressGoal></AddProgressGoal>}
-        {goalType === "streak" && <AddStreakGoal></AddStreakGoal>}
+        {goalType === "count" && <AddCountGoal goal={undefined}></AddCountGoal>}
+        {goalType === "frequency" && (
+          <AddFrequencyGoal goal={undefined}></AddFrequencyGoal>
+        )}
+        {goalType === "progress" && (
+          <AddProgressGoal goal={undefined}></AddProgressGoal>
+        )}
+        {goalType === "streak" && (
+          <AddStreakGoal goal={undefined}></AddStreakGoal>
+        )}
       </View>
     </View>
   );

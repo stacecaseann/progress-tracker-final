@@ -167,7 +167,7 @@ export class FrequencyGoal extends Goal {
         completedWeeks++;
       }
       daysCompleted.set(weekStart, completedDaysByDate);
-      console.log(daysCompleted);
+      //console.log(daysCompleted);
       weekStart = weekEnd;
     }
     return {

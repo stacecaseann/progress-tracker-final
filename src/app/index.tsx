@@ -1,16 +1,18 @@
 import { GoalProgressDisplay } from "@/components/GoalProgressDisplay";
+import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { goalColors } from "@/goals/goalColors";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 //This is the default page for the entire app
 export default function Index() {
+  const { currentUser } = useAuth();
   const { goals, checkIns, resetAllValues } = useGoals();
   //add reset to load initially from file again
   function handleReset(): void {
     resetAllValues();
   }
-
+  console.log("Current User" + currentUser);
   return (
     <ScrollView
       contentContainerStyle={{

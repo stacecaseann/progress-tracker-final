@@ -61,11 +61,11 @@ export function GoalProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("Mounting");
     function handleGoalsChanged(goals: Goal[]) {
-      console.log(goals);
+      //console.log(goals);
       setGoals(goals);
     }
     function handleCheckInsChanged(checkIns: CheckIn[]) {
-      console.log(checkIns);
+      //console.log(checkIns);
       setCheckIns(checkIns);
     }
     function handleError(error: Error) {

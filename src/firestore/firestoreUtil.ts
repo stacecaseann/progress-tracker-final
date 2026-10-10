@@ -42,7 +42,7 @@ export function loadGoals(
 }
 
 function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
-  console.log("Doc " + doc);
+  //console.log("Doc " + doc);
   const data = doc.data();
   switch (data.type) {
     case "count":
