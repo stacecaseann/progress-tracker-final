@@ -1,13 +1,14 @@
-import type { GoalType } from "./GoalType";
-import type { CheckIn } from "../checkIns/CheckIn";
+import { CheckIn } from "@/checkIns/CheckIn";
+import type { AllGoalData } from "./AllGoalData";
 import type { GoalData, GoalUpdates } from "./GoalData";
 import type { GoalProgress } from "./GoalProgress";
-import type { AllGoalData } from "./AllGoalData";
+import type { GoalType } from "./GoalType";
 import type { ValueUnit } from "./ValueUnit";
 
 //This is the base goal class. It is abstract so it can't be created, it can only be extended
 //Each function is a skeleton of what the goal must have on it's own goal type
 export abstract class Goal {
+  public readonly userId: string | undefined;
   public readonly id: string;
   abstract readonly type: GoalType;
   public name: string;
@@ -18,6 +19,7 @@ export abstract class Goal {
 
   constructor(data: GoalData) {
     this.id = data.id;
+    this.userId = data.userId;
     this.name = data.name;
     this.startDate = data.startDate;
     this.valueUnit = data.valueUnit;

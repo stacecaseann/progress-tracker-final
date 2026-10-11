@@ -4,6 +4,7 @@ import type { ValueUnit } from "./ValueUnit";
 //These are the fields that must exist on every goal.
 export type GoalData = {
   id?: string;
+  userId: string | undefined;
   name: string;
   type: GoalType;
   startDate: Date;

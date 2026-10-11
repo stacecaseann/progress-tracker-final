@@ -12,7 +12,8 @@ import {
   View,
 } from "react-native";
 
-export default function RegisterPage() {
+//Page to reset passord
+export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validEmail, setValidEmail] = useState(true);
@@ -59,7 +60,7 @@ export default function RegisterPage() {
     setEmail(value);
   }
   function handleLogin(): void {
-    router.replace("/logIn/logIn");
+    router.replace("/login");
   }
 
   return (

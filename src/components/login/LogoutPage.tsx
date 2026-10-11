@@ -1,8 +1,16 @@
 import { useAuth } from "@/context/AuthContext";
-import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
+//Page to logout
+//available from a tab icon
+//will redirect auto to login page once logged out
 export default function LogoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [logoutError, setLogoutError] = useState(false);
@@ -16,7 +24,7 @@ export default function LogoutPage() {
     try {
       await logout();
       setLogoutMessage("Logout success");
-      //router.replace("/"); //don't keep history, just replace
+      // router.replace("/logIn/logIn"); //don't keep history, just replace
     } catch (error) {
       console.log(error);
       setLogoutError(true);
@@ -28,6 +36,13 @@ export default function LogoutPage() {
   }
   return (
     <>
+      <View
+        style={{
+          gap: 16,
+          padding: 20,
+          margin: 10,
+        }}
+      ></View>
       <Pressable
         onPress={handleSubmit}
         disabled={isSubmitting}

@@ -1,4 +1,4 @@
-import type { CheckIn } from "../checkIns/CheckIn";
+import { CheckIn } from "@/checkIns/CheckIn";
 import { addDay } from "../utils/dateUtil";
 import { Goal } from "./Goal";
 import type { GoalType } from "./GoalType";
@@ -90,6 +90,7 @@ export class StreakGoal extends Goal {
   override toData(): StreakGoalData {
     return {
       id: this.id,
+      userId: this.userId,
       name: this.name,
       type: "streak",
       startDate: this.startDate,

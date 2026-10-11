@@ -12,6 +12,9 @@ import {
   View,
 } from "react-native";
 
+//Page to handle login
+//links to register and reset password
+//will default here if not signed in
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +35,7 @@ export default function LoginPage() {
       const userCredential = await login(email, password);
       console.log(userCredential);
       setLoginMessage("Login success");
-      router.replace("/"); //don't keep history, just replace
+      // router.replace("/(tabs)/index"); //don't keep history, just replace
     } catch (error) {
       console.log(error);
       setLoginError(true);
@@ -75,7 +78,7 @@ export default function LoginPage() {
   }
 
   function handleRegister(): void {
-    router.replace("/logIn/register");
+    router.replace("/login/register");
   }
 
   async function handleSignInWithGoogle() {

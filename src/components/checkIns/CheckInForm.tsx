@@ -1,7 +1,10 @@
 import { CheckIn } from "@/checkIns/CheckIn";
+import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { createCheckInId } from "@/goals/dataUtil";
-import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
@@ -14,18 +17,20 @@ type CheckInFormProps = {
 //This is the form to add a check in for a certain goal
 export function CheckInForm({ goalId, valueUnit, goalName }: CheckInFormProps) {
   const { addCheckIn } = useGoals();
-
+  const { currentUser } = useAuth();
   const [checkInDate, setCheckInDate] = useState(new Date());
   const [value, setValue] = useState(0);
 
   function handleDateChange(
-    _event: DateTimePickerChangeEvent, 
-    date?: Date): void {
+    _event: DateTimePickerChangeEvent,
+    date?: Date
+  ): void {
     if (date) setCheckInDate(date);
   }
 
   async function handleSubmit(): Promise<void> {
     if (!goalId) return;
+    if (!currentUser) return;
     const dateOnly = new Date(
       checkInDate.getFullYear(),
       checkInDate.getMonth(),
@@ -33,6 +38,7 @@ export function CheckInForm({ goalId, valueUnit, goalName }: CheckInFormProps) {
     );
     const checkIn: CheckIn = {
       id: createCheckInId(),
+      userId: currentUser.uid,
       goalId: goalId,
       checkInDate: dateOnly,
       value: value,
@@ -70,7 +76,7 @@ export function CheckInForm({ goalId, valueUnit, goalName }: CheckInFormProps) {
   //   String(checkInDate.getDate()).padStart(2, "0");
   return (
     <View style={{ gap: 6, padding: 16 }}>
-      <Text style={{ fontSize: 16, fontWeight: "500" }}>Goal</Text>
+      {/* <Text style={{ fontSize: 24, fontWeight: "500" }}>Goal</Text> */}
       {/* <Picker
         selectedValue={goalId}
         onValueChange={(id) => setSelectedGoalId(id)}
@@ -80,13 +86,17 @@ export function CheckInForm({ goalId, valueUnit, goalName }: CheckInFormProps) {
           <Picker.Item key={goal.id} label={goal.name} value={goal.id} />
         ))}
       </Picker> */}
-      <Text style={{ fontSize: 16, fontWeight: "500" }}>{goalName}</Text>
-      <Text style={{ fontSize: 16, fontWeight: "500" }}>Check-In Date</Text>
-      <DateTimePicker
-        value={checkInDate}
-        mode="date"
-        onValueChange={handleDateChange}
-      />
+      <View style={{ alignItems: "center" }}>
+        <Text style={{ fontSize: 32, fontWeight: "500" }}>{goalName}</Text>
+      </View>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Text style={{ fontSize: 16, fontWeight: "500" }}>Check-In Date</Text>
+        <DateTimePicker
+          value={checkInDate}
+          mode="date"
+          onValueChange={handleDateChange}
+        />
+      </View>
       {/* <input
         type="date"
         value={dateString}

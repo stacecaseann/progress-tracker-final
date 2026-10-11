@@ -1,10 +1,10 @@
-import { GoalProgressDisplay } from "@/components/GoalProgressDisplay";
+import { GoalProgressDisplay } from "@/components/progress/GoalProgressDisplay";
 import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { goalColors } from "@/goals/goalColors";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-//This is the default page for the entire app
+//This is the default page for the entire app, after being logged in
 export default function Index() {
   const { currentUser } = useAuth();
   const { goals, checkIns, resetAllValues } = useGoals();
@@ -40,11 +40,11 @@ export default function Index() {
           </View>
         );
       })}
-      <View>
+      {/* <View>
         <Pressable onPress={handleReset}>
           <Text>Reset</Text>
         </Pressable>
-      </View>
+      </View> */}
     </ScrollView>
   );
 }

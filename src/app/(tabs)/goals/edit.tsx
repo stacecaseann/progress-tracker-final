@@ -2,7 +2,7 @@ import EditGoals from "@/components/goals/EditGoals";
 import { useLocalSearchParams } from "expo-router";
 import { View } from "react-native";
 
-//This is the page to edit goals. It is not yet implemented.
+//This is the page to edit goals.
 export default function Edit() {
   const { goalId } = useLocalSearchParams<{
     goalId: string;

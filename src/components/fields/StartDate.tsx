@@ -21,6 +21,7 @@ export default function StartDate({ startDate, setStartDate }: StartDateProps) {
     <View
       style={{
         flexDirection: "row",
+        alignItems: "center",
       }}
     >
       <Text>Start Date</Text>

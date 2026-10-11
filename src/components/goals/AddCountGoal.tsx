@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { CountGoal } from "@/goals/CountGoal";
 import { CountGoalData } from "@/goals/CountGoalData";
@@ -15,6 +16,7 @@ type CountGoalProps = {
 };
 //This is the form for entering or editing a count goal
 export default function AddCountGoal({ goal }: CountGoalProps) {
+  const { currentUser } = useAuth();
   const { addGoal, updateGoal } = useGoals();
   const [startDate, setStartDate] = useState<Date>(
     goal?.startDate ?? new Date(2026, 0, 1)
@@ -26,6 +28,7 @@ export default function AddCountGoal({ goal }: CountGoalProps) {
 
   //This is the form for entering a count goal
   async function handleSubmit(): Promise<void> {
+    if (!currentUser) return;
     if (goal?.id) {
       goal.name = name;
       goal.startDate = startDate;
@@ -39,6 +42,7 @@ export default function AddCountGoal({ goal }: CountGoalProps) {
     } else {
       const goalData: CountGoalData = {
         name: name,
+        userId: currentUser.uid,
         type: "count",
         valueUnit: valueUnit,
         startDate: startDate,

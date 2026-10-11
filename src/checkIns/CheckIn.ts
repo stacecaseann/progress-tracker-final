@@ -1,6 +1,7 @@
 //This will be the type of goal check-ins
 export type CheckIn = {
   id: string;
+  userId: string | undefined;
   goalId: string;
   checkInDate: Date;
   value: number;
@@ -9,6 +10,7 @@ export type CheckIn = {
 //This will be the type of goal check-ins saved to json where the date is a string
 export type CheckInData = {
   id: string;
+  userId: string;
   goalId: string;
   checkInDate: string;
   value: number;

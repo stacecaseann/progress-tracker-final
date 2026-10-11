@@ -38,10 +38,10 @@ export default function ViewCheckIns() {
 
   return (
     <View
-    // contentContainerStyle={{
-    //   gap: 16,
-    //   padding: 16,
-    // }}
+      style={{
+        gap: 16,
+        padding: 16,
+      }}
     >
       <GoalPicker
         goals={goals}
@@ -59,10 +59,13 @@ export default function ViewCheckIns() {
                 borderRadius: 20,
                 alignItems: "center",
                 gap: 8,
+                flexDirection: "row",
               }}
             >
-              <Text>{checkIn.checkInDate.toLocaleDateString()}</Text>
-              <Text>
+              <Text style={{ fontSize: 20 }}>
+                {checkIn.checkInDate.toLocaleDateString()}:
+              </Text>
+              <Text style={{ fontSize: 20 }}>
                 {checkIn.value} {currentGoal?.valueUnit}
               </Text>
               <View

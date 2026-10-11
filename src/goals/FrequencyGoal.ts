@@ -1,4 +1,4 @@
-import type { CheckIn } from "../checkIns/CheckIn";
+import { CheckIn } from "@/checkIns/CheckIn";
 import {
   addMonth,
   addWeek,
@@ -189,6 +189,7 @@ export class FrequencyGoal extends Goal {
   override toData(): FrequencyGoalData {
     return {
       id: this.id,
+      userId: this.userId,
       name: this.name,
       type: "frequency",
       startDate: this.startDate,

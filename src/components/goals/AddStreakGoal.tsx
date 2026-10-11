@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { updateGoal } from "@/firestore/firestoreUtil";
 import { StreakGoal } from "@/goals/StreakGoal";
@@ -18,6 +19,7 @@ type StreakGoalProps = {
 
 //This is the form for entering a streak goal
 export default function AddStreakGoal({ goal }: StreakGoalProps) {
+  const { currentUser } = useAuth();
   const { addGoal } = useGoals();
   const [startDate, setStartDate] = useState<Date>(
     goal?.startDate ?? new Date(2026, 0, 1)
@@ -29,6 +31,7 @@ export default function AddStreakGoal({ goal }: StreakGoalProps) {
   const [value, setValue] = useState<string>(goal?.value?.toString() ?? "");
 
   async function handleSubmit(): Promise<void> {
+    if (!currentUser) return;
     if (goal?.id) {
       goal.name = name;
       goal.valueUnit = valueUnit;
@@ -44,6 +47,7 @@ export default function AddStreakGoal({ goal }: StreakGoalProps) {
     } else {
       const goalData: StreakGoalData = {
         name: name,
+        userId: currentUser.uid,
         type: "streak",
         valueUnit: valueUnit,
         startDate: startDate,

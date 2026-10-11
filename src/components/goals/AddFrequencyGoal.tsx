@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { FrequencyGoal } from "@/goals/FrequencyGoal";
 import { FrequencyGoalData } from "@/goals/FrequencyGoalData";
@@ -19,6 +20,7 @@ type FrequencyGoalProps = {
 };
 //This is the form for entering or editing a frequency goal
 export default function AddFrequencyGoal({ goal }: FrequencyGoalProps) {
+  const { currentUser } = useAuth();
   const { addGoal, updateGoal } = useGoals();
   const [startDate, setStartDate] = useState<Date>(
     goal?.startDate ?? new Date(2026, 0, 1)
@@ -35,6 +37,7 @@ export default function AddFrequencyGoal({ goal }: FrequencyGoalProps) {
     goal?.frequencyUnit ?? "week"
   );
   async function handleSubmit(): Promise<void> {
+    if (!currentUser) return;
     if (goal?.id) {
       goal.name = name;
       goal.startDate = startDate;
@@ -50,6 +53,7 @@ export default function AddFrequencyGoal({ goal }: FrequencyGoalProps) {
     } else {
       const goalData: FrequencyGoalData = {
         name: name,
+        userId: currentUser.uid,
         type: "frequency",
         valueUnit: valueUnit,
         startDate: startDate,

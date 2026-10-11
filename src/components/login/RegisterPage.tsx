@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 
+//page to register user
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

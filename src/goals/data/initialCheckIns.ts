@@ -4,12 +4,14 @@ import { CheckIn } from "@/checkIns/CheckIn";
 export const initialCheckIns: CheckIn[] = [
   {
     id: "1",
+    userId: "1",
     goalId: "1",
     checkInDate: new Date(2026, 9, 1),
     value: 50,
   },
   {
     id: "2",
+    userId: "1",
     goalId: "1",
     checkInDate: new Date(2026, 9, 2),
     value: 60,

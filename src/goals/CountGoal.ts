@@ -1,9 +1,8 @@
-import type { GoalType } from "./GoalType";
-import { Goal } from "./Goal";
+import { CheckIn } from "@/checkIns/CheckIn";
 import type { CountGoalData, CountGoalUpdates } from "./CountGoalData";
-import type { CheckIn } from "../checkIns/CheckIn";
-import type { GoalProgress } from "./GoalProgress";
 import { CountGoalProgress } from "./CountGoalProgress";
+import { Goal } from "./Goal";
+import type { GoalType } from "./GoalType";
 
 //The Count Goal class is a goal where you just save the unit
 //such as min, hours, or pages read and every check-in counts up the hours that you've completed
@@ -28,10 +27,10 @@ export class CountGoal extends Goal {
   //This overrides the base class and calculates progress by adding up all the check-ins for this goal
   override calculateProgress(checkIns: CheckIn[]): CountGoalProgress {
     const total = checkIns
-    .filter((checkIn) => checkIn.goalId === this.id)
-    .reduce((total, checkIn) => total + checkIn.value, 0);
+      .filter((checkIn) => checkIn.goalId === this.id)
+      .reduce((total, checkIn) => total + checkIn.value, 0);
     return {
-      type: "count",      
+      type: "count",
       totalValue: total,
       valueUnit: this.valueUnit,
       description: `${total} ${this.valueUnit} completed!`,
@@ -47,6 +46,7 @@ export class CountGoal extends Goal {
   override toData(): CountGoalData {
     return {
       id: this.id,
+      userId: this.userId,
       name: this.name,
       type: "count",
       startDate: this.startDate,

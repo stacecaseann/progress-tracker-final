@@ -16,6 +16,10 @@ import {
   useState,
 } from "react";
 import { auth } from "../../firebase";
+
+//Context to store authorization concerns
+//grants access to data
+//grants access to the menu items
 const AuthContext = createContext<{
   currentUser: User | null;
   authLoading: boolean;

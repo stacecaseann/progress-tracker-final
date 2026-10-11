@@ -8,6 +8,7 @@ import { StreakGoal } from "../StreakGoal";
 export const initialGoals: Goal[] = [
   new CountGoal({
     id: "1",
+    userId: "1",
     name: "Read",
     type: "count",
     startDate: new Date(2026, 7, 1),
@@ -15,6 +16,7 @@ export const initialGoals: Goal[] = [
   }),
   new ProgressGoal({
     id: "2",
+    userId: "1",
     name: "Practice Spanish",
     type: "progress",
     startDate: new Date(2026, 7, 1),
@@ -24,6 +26,7 @@ export const initialGoals: Goal[] = [
   }),
   new FrequencyGoal({
     id: "3",
+    userId: "1",
     name: "Practice the piano",
     type: "frequency",
     startDate: new Date(2026, 7, 1),
@@ -35,6 +38,7 @@ export const initialGoals: Goal[] = [
   }),
   new StreakGoal({
     id: "4",
+    userId: "1",
     name: "Exercise",
     type: "streak",
     startDate: new Date(2026, 7, 1),

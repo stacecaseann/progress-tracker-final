@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useGoals } from "@/context/GoalProvider";
 import { ProgressGoal } from "@/goals/ProgressGoal";
 import { ProgressGoalData } from "@/goals/ProgressGoalData";
@@ -16,6 +17,7 @@ type ProgressGoalProps = {
 };
 //This is the form for entering a progress goal
 export default function AddProgressGoal({ goal }: ProgressGoalProps) {
+  const { currentUser } = useAuth();
   const { addGoal, updateGoal } = useGoals();
   const [startDate, setStartDate] = useState<Date>(
     goal?.startDate ?? new Date(2026, 0, 1)
@@ -26,6 +28,7 @@ export default function AddProgressGoal({ goal }: ProgressGoalProps) {
   );
   const [value, setValue] = useState<string>(goal?.value?.toString() ?? "");
   async function handleSubmit(): Promise<void> {
+    if (!currentUser) return;
     if (goal?.id) {
       goal.startDate = startDate;
       goal.name = name;
@@ -41,6 +44,7 @@ export default function AddProgressGoal({ goal }: ProgressGoalProps) {
     } else {
       const goalData: ProgressGoalData = {
         name: name,
+        userId: currentUser.uid,
         type: "progress",
         valueUnit: valueUnit,
         startDate: startDate,

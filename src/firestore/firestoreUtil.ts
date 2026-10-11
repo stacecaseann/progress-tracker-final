@@ -19,17 +19,29 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 
+//Loads the goals from the firestore database
+//by user logged in
 export function loadGoals(
+  userId: string | undefined,
   onGoalsChanged: (goals: Goal[]) => void,
   onError: (error: Error) => void
 ) {
+  if (!userId) {
+    onGoalsChanged([]);
+    return () => {};
+  }
   const goalCollection = collection(db, "goals");
-  const q = query(goalCollection, orderBy("name"));
-  console.log("Load goals");
+  const q = query(
+    goalCollection,
+    where("userId", "==", userId),
+    orderBy("name")
+  );
+  console.log("Load goals for user:", userId);
+
   const unsubscribe = onSnapshot(
     q,
     (snapshot) => {
-      console.log("Snapshot received:", snapshot.docs.length);
+      console.log("Goal Snapshot received:", snapshot.docs.length);
       const goals = snapshot.docs.map(mapGoalFromDatabase) as Goal[];
       onGoalsChanged(goals);
     },
@@ -40,7 +52,7 @@ export function loadGoals(
   );
   return unsubscribe;
 }
-
+//Maps database objects to goals internally
 function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
   //console.log("Doc " + doc);
   const data = doc.data();
@@ -48,6 +60,7 @@ function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
     case "count":
       return new CountGoal({
         id: doc.id,
+        userId: data.userId,
         name: data.name,
         type: "count",
         startDate: data.startDate.toDate(),
@@ -56,6 +69,7 @@ function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
     case "frequency":
       return new FrequencyGoal({
         id: doc.id,
+        userId: data.userId,
         name: data.name,
         type: "frequency",
         startDate: data.startDate.toDate(),
@@ -68,6 +82,7 @@ function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
     case "progress":
       return new ProgressGoal({
         id: doc.id,
+        userId: data.userId,
         name: data.name,
         type: "progress",
         startDate: data.startDate.toDate(),
@@ -78,6 +93,7 @@ function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
     case "streak":
       return new StreakGoal({
         id: doc.id,
+        userId: data.userId,
         name: data.name,
         type: "streak",
         startDate: data.startDate.toDate(),
@@ -89,13 +105,23 @@ function mapGoalFromDatabase(doc: QueryDocumentSnapshot): Goal {
       throw new Error(`Goal Type is not supported`);
   }
 }
-
+//Loads the checkIns from the firestore database
+//by user logged in
 export function loadCheckIns(
+  userId: string | undefined,
   onCheckInsChanged: (goals: CheckIn[]) => void,
   onError: (error: Error) => void
 ) {
+  if (!userId) {
+    onCheckInsChanged([]);
+    return () => {};
+  }
   const checkInCollection = collection(db, "checkIns");
-  const q = query(checkInCollection, orderBy("checkInDate"));
+  const q = query(
+    checkInCollection,
+    where("userId", "==", userId),
+    orderBy("checkInDate")
+  );
   console.log("Load CheckIns");
   const unsubscribe = onSnapshot(
     q,
@@ -120,6 +146,43 @@ export function loadCheckIns(
   return unsubscribe;
 }
 
+// export function loadProfile(
+//   userId: string | null,
+//   onProfileChanged: (profile: Profile | null) => void,
+//   onError: (error: Error) => void
+// ) {
+//   if (!userId) {
+//     onProfileChanged(null);
+//     return;
+//   }
+//   const profileCollection = collection(db, "profiles");
+//   const q = query(profileCollection, where("userId", "==", userId));
+//   console.log("Load Profile");
+//   const unsubscribe = onSnapshot(
+//     q,
+//     (snapshot) => {
+//       console.log("Snapshot received:", snapshot.docs.length);
+//       const profileDb = snapshot.docs[0];
+//       if (profileDb) {
+//         const profile = new Profile({
+//           userId: profileDb.id,
+//           ...profileDb.data,
+//         });
+
+//         onProfileChanged(profile);
+//       } else {
+//         onProfileChanged(null);
+//       }
+//     },
+//     (error) => {
+//       console.error("load checkIns error:", error);
+//       onError(error);
+//     }
+//   );
+//   return unsubscribe;
+// }
+
+//adds a goal to the firestore database
 export async function addGoal(goal: Goal): Promise<void> {
   const goalCollection = collection(db, "goals");
   const { id, ...goalData } = goal; //"object destructuring with the rest operator"
@@ -146,7 +209,7 @@ export async function addGoal(goal: Goal): Promise<void> {
     console.error("Error adding goal.", error);
   }
 }
-
+//adds a checking to the firestore db
 export async function addCheckIn(checkIn: CheckIn): Promise<void> {
   const checkInCollection = collection(db, "checkIns");
   const { id, ...checkInData } = checkIn; //"object destructuring with the rest operator"
@@ -162,7 +225,7 @@ export async function addCheckIn(checkIn: CheckIn): Promise<void> {
     console.error("Error adding checkIn.", error);
   }
 }
-
+//deletes checkin from firestore db
 export async function deleteCheckIn(checkInId: string): Promise<void> {
   try {
     const checkIn = doc(db, "checkIns", checkInId);
@@ -171,7 +234,7 @@ export async function deleteCheckIn(checkInId: string): Promise<void> {
     console.error("Error deleting check-in.", error);
   }
 }
-
+//deletes goal from firestore db
 export async function deleteGoal(goalId: string): Promise<void> {
   try {
     const goal = doc(db, "goals", goalId);
@@ -182,7 +245,7 @@ export async function deleteGoal(goalId: string): Promise<void> {
     console.error("Error deleting goal.", error);
   }
 }
-
+//delete checkins by goal id
 export async function deleteCheckInsByGoalId(goalId: string): Promise<void> {
   const checkInCollection = collection(db, "checkIns");
 
@@ -193,7 +256,7 @@ export async function deleteCheckInsByGoalId(goalId: string): Promise<void> {
     await deleteDoc(doc.ref); //this is the reference to the actual document
   });
 }
-
+//updates the goal
 export async function updateGoal(goal: Goal): Promise<void> {
   //To update, we need a specific document
   const { id, ...goalData } = goal; //"object destructuring with the rest operator"

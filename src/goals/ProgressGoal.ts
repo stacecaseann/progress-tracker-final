@@ -1,4 +1,4 @@
-import type { CheckIn } from "../checkIns/CheckIn";
+import { CheckIn } from "@/checkIns/CheckIn";
 import { Goal } from "./Goal";
 import type { GoalType } from "./GoalType";
 import type { ProgressGoalData, ProgressGoalUpdates } from "./ProgressGoalData";
@@ -64,6 +64,7 @@ export class ProgressGoal extends Goal {
   override toData(): ProgressGoalData {
     return {
       id: this.id,
+      userId: this.userId,
       name: this.name,
       type: "progress",
       startDate: this.startDate,

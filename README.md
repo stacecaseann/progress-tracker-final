@@ -1,56 +1,62 @@
-# Welcome to your Expo app 👋
+# Overview
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This project came about in an attempt to learn how to integrate a cloud database with a react native app. I decided to use Google's Firebase platform and create a Cloud Firestore database. I also decided to experiment with the authentication capabilities available with Firebase.
 
-## Get started
+This is an app to make and keep goals. There are 4 different types of goals:
 
-1. Install dependencies
+1. Count Goal- count the number of minutes/hours/pages that you spend on a certain goal.
+2. Progress Goal - Set a goal to reach a certain number of minutes/hours/pages
+3. Streak Goal - Set a daily goal and earn a streak
+4. Frequency Goal - Set a goal to do something daily/times per week/times per month.
 
-   ```bash
-   npm install
-   ```
+When you open up the app, you will be required to create an account and login. The app will store the login and allow you to create goals, check-in with those goals, and view progress.
+The goal and check-in data is stored by user, so if you log out and log in with a different user, you will only see your data.
 
-2. Start the app
+Setting goals is my passion in life and I wanted a way to track progress a little differently than other habit apps I have used.
 
-   ```bash
-   npx expo start
-   ```
+[Software Demo Video](https://youtu.be/PGwT2APgcdk)
 
-In the output, you'll find options to open the app in a
+# Cloud Database
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+I am using Firestore, which is a NoSQL database. It stores the data in collections and documents. Part of it's capabilities are real-time synchronization, cloud-based storage, no rigid table structure, offline support, and scalability.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+My database is very simple with only 2 collections - Goals and CheckIns. Goals have a specific id, and CheckIns are added by goalId and check-in date. The goalId is on both tables for easier querying capability, which seems to be the practice in Firestore vs a SQL database.
 
-## Get a fresh project
+One additional capability is that Authentication is enabled, so a user can be created with email/password security. This userId is saved on the Goals and CheckIns so that they can only be available per user.
 
-When you're ready, run:
+# Development Environment
 
-```bash
-npm run reset-project
-```
+I used VS Code, Firestore, Firebase, Expo, react Native, and Expo Go as tools to build my project.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+I used TypeScript as the language.
+These libraries were used:
+React
+Expo Router
+Firebase SDK
+Async Storage
+react-native-dropdown-picker
+@react-native-community/datetimepicker
+@react-native-vector-icons/ionicons
 
-### Other setup steps
+# Useful Websites
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+{Make a list of websites that you found helpful in this project}
 
-## Learn more
+- [Firebase Setup in React Native Expo](https://www.youtube.com/watch?v=H-vG4G8eKNE&t=204s)
+- [Firebase Documentation](https://firebase.google.com/docs/firestore)
+- [Cloud Firestore Data Modeling](https://www.youtube.com/watch?v=lW7DWV2jST0)
+- [Firebase Documentation](https://firebase.google.com/docs/firestore)
+- [Firebase Authentication Documentation](https://firebase.google.com/docs/auth/web/password-auth)
+- [Firebase Authentication v9 in ReactJS](https://www.youtube.com/watch?v=MsDjbWUn3IE)
 
-To learn more about developing your project with Expo, look at the following resources:
+# Future Work
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Add Google Authentication
+- Add Settings Page
+- Add Profile Page
+- Add error handling
+- Add the ability to edit the goals
+- Make the display better
+- Add more options for value besides hours/minutes/pages
+- Add plural/single words to descriptions
+- Work out start/end dates for the goals and progress a little better
