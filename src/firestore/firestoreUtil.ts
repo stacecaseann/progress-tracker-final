@@ -37,11 +37,13 @@ export function loadGoals(
     orderBy("name")
   );
   console.log("Load goals for user:", userId);
-
+  
+  //onsnapshot is a real-time listener
   const unsubscribe = onSnapshot(
-    q,
+    q,    
     (snapshot) => {
       console.log("Goal Snapshot received:", snapshot.docs.length);
+      //this query runs to start, then listens for updates and runs every time there's a change
       const goals = snapshot.docs.map(mapGoalFromDatabase) as Goal[];
       onGoalsChanged(goals);
     },
@@ -50,6 +52,7 @@ export function loadGoals(
       onError(error);
     }
   );
+  //stops listening when it's not needed 
   return unsubscribe;
 }
 //Maps database objects to goals internally

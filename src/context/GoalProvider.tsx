@@ -34,6 +34,7 @@ export function GoalProvider({ children }: { children: ReactNode }) {
   }
 
   //onSnapshot listens for database changes, and your callback functions update React state so the UI refreshes automatically.
+  //useeffect subscribes to firestore data for the logged in user
   useEffect(() => {
     console.log("Mounting");
     function handleGoalsChanged(goals: Goal[]) {
@@ -51,6 +52,7 @@ export function GoalProvider({ children }: { children: ReactNode }) {
     function handleError(error: Error) {
       console.log(error);
     }
+    //subscribes to real-time changes in the current user's goals
     const unsubscribedGoals = loadGoals(
       currentUser?.uid,
       handleGoalsChanged,
@@ -71,7 +73,8 @@ export function GoalProvider({ children }: { children: ReactNode }) {
       unsubscribedCheckIns();
       //unsubscribedProfile();
     };
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid]); //this user changes, react cleans up the old listeners and creates new ones
+
   //TODO In the future, use a useRef hook so that it doesn't save as soon as it loads
   // useEffect(() => {
   //   if (!isLoaded) return;
@@ -93,6 +96,7 @@ export function GoalProvider({ children }: { children: ReactNode }) {
   //   saveChangedCheckIns();
   // }, [checkIns]);
   console.log("Project:", process.env.EXPO_PUBLIC_PROJECT_DOMAIN);
+  //allows all components access to these functions
   return (
     <GoalContext.Provider
       value={{

@@ -13,6 +13,35 @@ export default function Index() {
     resetAllValues();
   }
   console.log("Current User" + currentUser);
+  if (goals.length === 0) {
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          //justifyContent: "center",
+          alignItems: "center",
+          gap: 16,
+          padding: 16,
+        }}
+      >
+        <View style={{ height: 30 }} />
+        <Text
+          style={{
+            fontSize: 32,
+          }}
+        >
+          Welcome!
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+          }}
+        >
+          Go to the Goals Tab to Add new Goals
+        </Text>
+      </ScrollView>
+    );
+  }
   return (
     <ScrollView
       contentContainerStyle={{

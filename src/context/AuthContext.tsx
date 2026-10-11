@@ -49,7 +49,7 @@ const AuthContext = createContext<{
 });
 
 export const useAuth = () => useContext(AuthContext);
-
+//Provider that will wrap the application and allow me to use these functions in the other components
 export function AuthContextProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -70,6 +70,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     return sendPasswordResetEmail(auth, email);
   }
   useEffect(() => {
+    //onauthstatechanged starts listening to firebase authentication
+    //will update the current user when that changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setAuthLoading(false);

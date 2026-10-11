@@ -5,6 +5,7 @@ import { ActivityIndicator } from "react-native";
 //sets navigation based on if logged in
 export default function RootNavigation() {
   const { currentUser, authLoading } = useAuth();
+  //while it's loading, show a spinner
   if (authLoading) {
     return <ActivityIndicator />;
   }

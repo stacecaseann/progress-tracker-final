@@ -14,7 +14,7 @@ The goal and check-in data is stored by user, so if you log out and log in with 
 
 Setting goals is my passion in life and I wanted a way to track progress a little differently than other habit apps I have used.
 
-[Software Demo Video](https://youtu.be/PGwT2APgcdk)
+[Software Demo Video](https://youtu.be/BLAxD_y0eMI)
 
 # Cloud Database
 
